@@ -87,8 +87,9 @@ function timeParting(t, z, y) {
         }
     };
 }
-
-var currentYear = new Date().getFullYear();
-var timepart = timeParting('h','-8',currentYear);
-
-return timepart;
+function timePartHourUser() {
+	var currentYear = new Date().getFullYear();
+	var timepart = timeParting('h','-8',currentYear);
+	
+	return timepart;
+}
