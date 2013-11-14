@@ -88,7 +88,7 @@ function timeParting(t, z, y) {
         }
     };
 }
-function timePartHourUser() {
+function timePartHourPacific() {
 	var currentYear = new Date().getFullYear();
 	var timepart = timeParting('h','-8',currentYear);
 	
