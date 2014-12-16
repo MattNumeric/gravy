@@ -1,0 +1,1642 @@
+/**
+ * Numeric Analytics Framework Object
+ * This allows tool agnostic analytics tracking.
+ * @name naf
+ * @constructor
+ * @this {nNaf}
+ * @author Numeric Analytics
+ * @returns {naf} - Numeric Framework core object
+ */
+
+function nNaf() {
+	try {
+		// if no config, no tracking
+
+		this._init();
+	}
+	catch(e){}
+}
+
+nNaf.prototype.pageCode = function () {
+
+	//Set Page Level Variables
+	this.setPageName();
+
+
+	$("form.trackForm").each( function (item) {
+
+		naf.formtracker(this);
+	});
+
+	//Load the Header Code
+	this.prot = location.protocol;
+	if (location.protocol === "file:") {
+		this.prot = "http:";
+	}
+
+	$( document ).ready(function() {
+	    naf.pageLoad();
+	});
+
+	this.fq(); // flush anything we have in the queue
+
+};
+
+nNaf.prototype.pageLoad = function () {
+
+	$("form.trackForm").each( function (item) {
+		naf.formtracker(this);
+	});
+
+
+};
+
+
+var js_track = {
+	s_usedNav: function (e, section) {
+		//section is TopLevel or AllCategories
+		if(typeof s.t === 'function') {
+			//s.t({events:'event14',eVar3:'topnav' + section});
+		}
+	},
+	s_leftNav: function (e) {
+		if(typeof s.t === 'function') {
+			//s.t({events:'event18',eVar3:'leftnav'});
+		}
+	},
+	s_mostPopular: function (e, section) {
+		if(typeof s.t === 'function') {
+			//s.t({events:'event33',eVar3:'mostPopular' + section});
+		}
+	},
+	s_leftSubNav: function (e, mode) {
+		if(typeof s.t === 'function') {
+			//s.t({events:'event33',eVar3:'leftNav' + mode});
+		}
+	},
+
+	s_pageView: function (thisName) {
+		if(typeof s.t === 'function') {
+			//s.t({pageName:thisName});
+		}
+	},
+	s_quickSubscribe: function (email) {
+		if(typeof s.t === 'function'){
+			//s.t({prop27: email,eVar41: email});
+		}
+	},
+	s_createContent: function (type, evt) {
+		if(typeof s.t === 'function') {
+			//s.t({eVar48: type, events: evt});
+		}
+	},
+	s_addCart: function (productString, avgReview) {
+		if(typeof s.t === 'function') {
+			productString = productString.substring(0, productString.length - 1) + '|eVar47='+avgReview;
+			alert(productString);
+			//s.t({events:'scAdd,scOpen',products:productString});
+			require(['autozone.utils'], function (utils){
+				utils.log('productString2: '+productString);
+			});
+		}
+	},
+	s_navVideo: function () {
+		if(typeof s.t === 'function'){
+			//s.t({eVar3: 'navVideo'});
+		}
+	},
+	s_footerVideoLink: function () {
+		if(typeof s.t === 'function'){
+			//s.t({eVar3: 'footerVideoLink'});
+		}
+	},
+	s_recommendationsClick: function (sku) {
+		if(typeof s.t === 'function'){
+			//s.t({eVar29: sku});
+		}
+	},
+	s_chatShown: function () {
+		if(typeof s.tl === 'function'){
+			s.events = "event15";
+			s.linkTrackVars = 'events';
+			s.linkTrackEvents = 'event15';
+			//s.tl(true, 'o', "Chat Shown");
+		}
+	},
+	s_chatClicked: function () {
+		if(typeof s.tl === 'function'){
+			s.events='event16,event17';
+			s.linkTrackVars = 'eVar35,eVar36,events';
+			s.linkTrackEvents = 'event16,event17';
+			s.eVar35="department";
+			s.eVar36='Chat Begins';
+			//s.tl(true, 'o', "Chat Clicked");
+		}
+	},
+	s_trackDealsFilterLink: function (text) {
+		if(typeof s.tl === 'function'){
+			if (text === "Show Online Only Deals") {
+				s.events = "event22";
+				s.linkTrackVars = 'events';
+				//s.tl(true, 'o', "Show Online Only Deals");
+			} else if (text === "Show All") {
+				s.events = "event23";
+				s.linkTrackVars = 'events';
+				//s.tl(true, 'o', "Show All Deals");
+			}
+		}
+	},
+	s_trackco001: function (text) {
+		if(typeof s.tl === 'function'){
+			if (text === "Locate a professional you can trust.") {
+				s.events = "event38";
+				s.linkTrackVars = 'events';
+				//s.tl(true, 'o', "co001_find_a_repair_shop:a");
+			} else if (text === "Have a Special Job That Requires a Special Tool?") {
+				s.events = "event38";
+				s.linkTrackVars = 'events';
+				//s.tl(true, 'o', "co001_loan_a_tool:b");
+			}
+		}
+	},
+	s_getThisDeal: function () {
+		if(typeof s.tl === 'function'){
+			s.events = "event24";
+			s.linkTrackVars = "events";
+			s.linkTrackEvents = "event24";
+			//s.tl(true, 'o', 'Get This Deal');
+		}
+	},
+	s_trackDealStep: function (propValue,addToCart) {
+		if(typeof s.tl === 'function'){
+			if (addToCart) {
+				s.events = "scAdd";
+				s.linkTrackVars = 'events';
+				s.linkTrackEvents = 'scAdd';
+				/* TODO track products string here */
+			} else {
+				s.prop30 = propValue;
+				s.linkTrackVars = 'prop30';
+			}
+			//s.tl(true, 'o', "Deal Steps");
+		}
+	},
+	s_trackCouponAdd: function (couponId) {
+		if(typeof s.tl === 'function'){
+			s.eVar43 = couponId;
+			s.prop31 = couponId;
+			s.linkTrackVars = 'prop31,eVar43';
+			//s.tl(true, 'o', 'Coupon Added');
+		}
+	},
+	s_trackCouponRemove: function () {
+		s.events = "event26";
+		s.linkTrackVars = "events";
+		s.linkTrackEvents = "event26";
+		//s.tl(true, 'o', 'Coupon Removed');
+	},
+	s_abTest: function (test, onOff) {
+		s.eVar70 = test + ":" + onOff;
+		s.linkTrackVars = 'eVar70';
+		//s.tl(true, 'o', test);
+	},
+	s_trackLink: function (linkName) {
+		s.eVar46 = linkName;
+		s.prop34 = linkName;
+		s.linkTrackVars = 'eVar46,prop34';
+		//s.tl(true, 'o', linkName);
+	},
+	s_trackStars: function (avgRev) {
+		s.prop35 = avgRev;
+		s.linkTrackVars = 'prop35';
+		//s.tl(true, 'o', 'Average Review Stars Reported');
+	},
+	s_trackViewDetailsBuy: function () {
+		s.events = "event28";
+		s.linkTrackVars = "events";
+		s.linkTrackEvents = "event28";
+		//s.tl(true, 'o', 'View Details and Buy');
+	},
+	s_trackProceedToCheckout: function () {
+		s.events = "event30";
+		s.linkTrackVars = "events";
+		s.linkTrackEvents = "event30";
+		//s.tl(true, 'o', 'Proceed To Checkout');
+	},
+	s_trackPlaceOrder: function () {
+		s.events = "event29";
+		s.linkTrackVars = "events";
+		s.linkTrackEvents = "event29";
+		//s.tl(true, 'o', 'Place Order');
+	},
+	s_trackPaymentError: function () {
+		s.events = "event32";
+		s.linkTrackVars = "events";
+		s.linkTrackEvents = "event32";
+		//s.tl(true, 'o', 'Payment Error');
+	},
+	s_trackItemLevelError: function () {
+		s.events = "event31";
+		s.linkTrackVars = "events";
+		s.linkTrackEvents = "event31";
+		//s.tl(true, 'o', 'Cart Item Level Error');
+	}
+};
+
+/**
+ * Output helpful informtion to the console if debug is enabled
+ * @module debug
+ * @param {String} v - The debug text to print to the console
+ * @returns nothing, just prints to the console
+ */
+nNaf.prototype.debug = function(v){
+	try {
+		var debug = typeof this.cfg != 'undefined' ? this.cfg.debug : false;
+		if(typeof console != 'undefined' && typeof console.log !='undefined' && debug){
+			console.log('naf: ',v);
+		}
+	}
+	catch(e){
+		// only alert once
+		if(!this.alerted){
+			alert('Please use a browser that supports console to enable debugging.');
+			this.alerted = true;
+		}
+	}
+}
+
+/**
+ * Initialize the tracking
+ * @module _init
+ * @param cfg = the JSON config specific to the client
+ * @returns nothing
+ */
+nNaf.prototype._init = function() {
+	try {
+		// load the config on the naf object
+		/*********************** Client Config ***********************/
+		/* This global JSON object contains all of the config settings for a client.  It makes it quick and easy to make
+		 * a change, as well as to troubleshoot any issues.  It also contains config for any plug-ins so they are centralized,
+		 * easy to find, and portable across the framework. */
+		aryConfig = {
+			// array to use for ajax
+			'nafArray':'_naq',
+			// functions that must wait until the initial page load to execute - more can be added in app files
+			'afterPageLoad':['callBack'],
+			// framework file name, used to find location to self.  Only needed if not analyticsFramework.js
+			'frameworkFile':'naf',
+			//'frameworkLocation':'', // optional to hard code the location, uncomment to use
+			// data variable used to set the appId
+			'appId':'app',
+			// JavaScript file extension
+			'scriptSuffix':'.js',
+			// Data types to read from
+			'dataTypes':{
+				'meta':'md', // this is the prefix of the meta name
+				//'json':'digitalData', // the global JSON object
+				'html5':{
+					'tags':['*'],
+					'startsWith':'md' // this converts to data-md-
+				}
+				//'cookies':true // if true, it uses the "dataCookie" in the cookies plugin config
+			},
+			// cookie config
+			'cookies':{
+				'defaultCookie':'naf', // default super cookie for saving info
+				'dataCookie':'nafData', // automatic cookie for saving and loading data
+				'chipDelimiter':'~',
+				'nameValueDelimiter':'|'
+			},
+			// jQuery object to use - only if the plug-in is not included
+			'jQuery':'jQuery',
+			// force debug to true
+			'debug':false,
+			// Plug-in Config
+			'plugins':{
+				// plugin settings go here
+			}
+		};
+		this.cfg = aryConfig;
+		// setup other objects on the naf object
+		this.data = {};
+		this.dataTypes = []; //array that lets us know what data types have loaded
+		if(!this.cfg.debug){this.cfg.debug = false;}
+		if(!this.cfg.nafArray){this.cfg.nafArray='_naq';}
+		// create the naf array if it doesn't already exist
+		if(typeof window[this.cfg.nafArray] == 'undefined'){
+			window[this.cfg.nafArray] = [];
+		}
+		this.fLoad = []; // array of files that have loaded
+		this.getLocationToSelf(); // find location of naf file
+		this.appId = '';
+		this.appFolder = this.cfg.appFolder ? this.cfg.appFolder : 'apps'; // default app folder if not in config
+		this.firstPageView = false; // flag that detects first page view
+		this.scriptSuffix = typeof this.cfg.scriptSuffix != 'undefined' ? this.cfg.scriptSuffix : '.js';
+
+		// set debug
+		switch(this.getQueryParam('debug')){
+			case '1':
+				this.cfg.debug=true;
+				break;
+			case '2':
+				this.cfg.debug=true;
+				break;
+			case '3':
+				this.cfg.debug=true;
+				this.scriptSuffix='.src.js';
+				break;
+		}
+
+		// setup jQuery
+		this.jquery = false; // flag that lets us know if jquery is included
+		if(typeof this.$ == 'undefined'){
+			// check to see if it's in the config
+			if(this.cfg.jQuery){
+				if(typeof window[this.cfg.jQuery] == 'function'){
+					this.$ = window[this.cfg.jQuery];
+				}
+			}
+			// check for jQuery, pretty standard
+			if(!this.$ && typeof jQuery != 'undefined'){
+				this.$ = jQuery;
+			}
+			// check for $, pretty standard
+			if(!this.$ && typeof $ != 'undefined'){
+				this.$ = $;
+			}
+			// create it as an empty function
+			if(!this.$){
+				this.$ = function(){
+					var x = {
+						html:function(){},
+						text:function(){},
+						each:function(){},
+						on:function(){},
+						live:function(){},
+						click:function(){},
+						is:function(){},
+						ready:function(){}
+					};
+					return x;
+				}
+			}else{this.jquery=true;}
+		}else{this.jquery=true;}
+
+		// load data on the page - wait for full page load so we can load in head or body
+		this.loadData();
+
+		// check for the appId and put in our config
+		if(this.get(this.cfg.appId)){
+			this.appId = this.get(this.cfg.appId);
+			this.debug('App is set to '+this.appId);
+		}
+
+		// custom init function, runs if it exists
+		if(typeof this.customInit == 'function'){
+			this.customInit();
+		}
+
+		this.debug('Numeric framework initilized');
+
+
+
+	}
+	catch(e){this.debug('_init: '+e);}
+};
+
+/**
+ * Check an object to see if it exists
+ */
+
+nNaf.prototype.checkObj = function (object) {
+	ary_object = object.split(".");
+	co = this.digitalData;
+	for(var i = 1; i < ary_object.length; i++)
+	{
+		if (typeof(co[ary_object[i]]) != 'undefined') {
+			co = co[ary_object[i]];
+		} else {
+			return false;
+		}
+	}
+
+	return true; //true or false
+};
+
+nNaf.prototype.track = function (objData) {
+	utag.link( objData );
+};
+
+nNaf.prototype.setSections = function(acti) {
+	 var urlBits = [];
+	 var bitRef = 0;
+	 var secString = "";
+	 var pStr="";
+	 var breaktest = "";
+	 var sections = {};
+
+	 pUrl = document.location.toString();
+
+	 pUrl = pUrl.split("?")[0];
+	 pUrl = pUrl.split("/");
+
+	 for (i=0; i<pUrl.length; i++) {
+		 pUrl[i] = pUrl[i].toLowerCase();
+	 }
+
+	 for (var i=0; i<pUrl.length; i++) {
+		 pUrlDot = pUrl[i].split(".");
+		 for (var p=0; p<pUrlDot.length; p++) {
+			 //check to see if we have found the TLD
+			 if (pUrlDot[p].indexOf("com") > -1) {
+				 breaktest = "break";
+				 bitRef=i;
+				 break;
+			 } else if (pUrlDot[p].indexOf("localhost:8180") > -1) {
+				 breaktest = "break";
+				 bitRef=i;
+				 break;
+			 }
+		 }
+		 if (breaktest == "break") {
+			 break;
+		 }
+	 }
+	 pUrlLen = pUrl.length;
+
+	 if(jQuery.inArray("autozone",pUrl) > -1) {
+		 bitRef=bitRef+1;
+	 }
+	 sections['section'] = "index";
+	 if (pUrlLen > (bitRef +1) && pUrl[bitRef +1].length > 0) {
+		 sections['section'] = cleanName(pUrl[bitRef +1]);
+	 }
+	 if (pUrlLen > (bitRef +2) && pUrl[bitRef +2].length > 0) {
+		 sections['subSection'] = cleanName(pUrl[bitRef +2]);
+	 }
+	 if (pUrlLen > (bitRef +3) && pUrl[bitRef +3].length > 0) {
+		 sections['subSubSection'] = cleanName(pUrl[bitRef +3]);
+	 }
+	 if (pUrlLen > (bitRef +4) && pUrl[bitRef +4].length > 0) {
+		 sections['subSubSubSection'] = cleanName(pUrl[bitRef +4]);
+	 }
+	 if (pUrlLen > (bitRef +5) && pUrl[bitRef +5].length > 0) {
+		 sections['subSubSubSubSection'] = cleanName(pUrl[bitRef +5]);
+	 }
+	 return sections;
+};
+
+/**
+* Clean up names from url strings
+*/
+function cleanName(strName) {
+
+	strName = strName.replace(/_/g," ");
+	strName = strName.replace(/-/g," ");
+	strName = strName.replace(/\.php/g,"");
+	strName = strName.replace(/\.do/g,"");
+	strName = strName.replace(/\.jsp/g,"");
+	strName = strName.replace(/\.aspx/g,"");
+	strName = strName.replace(/\.html/g,"");
+	strName = strName.replace(/\.htm/g,"");
+	strName = strName.replace(/\.cgi/g,"");
+
+	if (strName.indexOf("?") > -1) {
+
+		aryNoParam = strName.split("?");
+		strName = aryNoParam[0];
+
+	}
+	if (strName.indexOf("#") > -1) {
+
+		aryNoHash = strName.split("#");
+		strName = aryNoHash[0];
+
+	}
+
+	return strName;
+}
+
+nNaf.prototype.setPageName = function () {
+
+	this.set("page_name", "autozone");
+	var sections = naf.setSections(document.location.href);
+
+	if (sections['section'] !== "" && typeof(sections['section']) != 'undefined') {
+
+		//this.set("channel", sections['section']);
+		this.set("page_name", this.get("page_name") + " : " + sections['section']);
+	}
+
+	if (sections['subSection'] !== "" && typeof(sections['subSection']) != 'undefined') {
+		this.set("site_section2", sections['subSection']);
+		this.set("page_name", this.get("page_name") + " : " + sections['subSection']);
+	}
+
+	if (sections['subSubSection'] !== "" && typeof(sections['subSubSection']) != 'undefined') {
+		this.set("site_section3", sections['subSubSection']);
+		this.set("page_name", this.get("page_name") + " : " + sections['subSubSection']);
+	}
+
+ 	if (sections['subSubSubSection'] !== "" && typeof(sections['subSubSubSection']) != 'undefined') {
+ 		this.set("site_section4", sections['subSubSubSection']);
+ 		this.set("page_name", this.get("page_name") + " : " + sections['subSubSubSection']);
+ 	}
+
+ 	if (sections['subSubSubSubSection'] !== "" && typeof(sections['subSubSubSubSection']) != 'undefined') {
+ 		this.set("site_section5", sections['subSubSubSection']);
+ 		this.set("page_name", this.get("page_name") + " : " + sections['subSubSubSubSection']);
+ 	}
+};
+
+/**
+ * Get a query parameter
+ * @module getQueryParam
+ * @param b - {String} - The query parameter to get, case sensitive
+ * @param a - {String} - An alternate URL to use besides the current URL
+ * @param c - {String} - An alternate separator, defaults to &
+ * @returns {String} - value of the query parameter, blank string if it doesn't exist
+ */
+nNaf.prototype.getQueryParam = function(b, a, c){
+	try {
+		var e;
+		a = a || window.location.href;
+		c = c || '&';
+		if (b && a && (a = '' + a, e = a.indexOf('?'), e >= 0 && (a = c + a.substring(e +1) + c, e = a.indexOf(c + b + '='), e >= 0 && (a = a.substring(e + c.length + b.length + 1), e = a.indexOf(c), e >= 0 && (a = a.substring(0, e)), a.length > 0)))){
+			a = this.unescape(a);
+			a = this.sanitizeUntrusted(a);
+			return a;
+		}
+		return '';
+	}
+	catch(e_str){this.debug('getQueryParam: '+e_str);}
+};
+
+/**
+ * Returns a sanitized version of version of an untrusted string
+ * @module sanitizeUntrusted
+ * @param str - {String} - The string to sanitize
+ * @returns {String} - The sanitized output, with risky characters replaced with !
+ */
+nNaf.prototype.sanitizeUntrusted = function(str) {
+	try {
+		if(typeof str == 'undefined'){
+			str = '';
+		}
+		var replace_with = "!!";
+		str = str.replace(/[\"<>\(\)']/igm,replace_with);
+		return str;
+	} catch(e) {
+		this.debug('sanitizeUntrusted : '+e);
+	}
+};
+
+/**
+ * Escapes a value
+ * @module escape
+ * @param b - {String} - The string to escape
+ * @returns {String} - The escaped output
+ */
+nNaf.prototype.escape = function (b) {
+	try {
+		var a,c;
+		if (!b)
+			return b;
+		b = encodeURIComponent(b);
+		for (a = 0; a < 7; a++)
+			c = "+~!*()'".substring(a, a + 1), b.indexOf(c) >= 0 && (b = b.replace(c, "%" + c.charCodeAt(0).toString(16).toUpperCase()));
+		return b;
+	}
+	catch(e){
+		this.debug('escape: '+e);
+	}
+};
+
+/**
+ * Unescapes a value
+ * @module unescape
+ * @param b - {String} - The string to unescape
+ * @returns {String} - The unescaped output
+ */
+nNaf.prototype.unescape = function (b) {
+	try {
+		if (!b)
+			return b;
+		b = b.indexOf("+") >= 0 ? b.replace(/\+/g,' ') : b;
+		try {
+			return decodeURIComponent(b);
+		} catch (a) {}
+		return unescape(b);
+	}
+	catch(e){this.debug('unescape: '+e);}
+};
+
+/**
+ * Reads a regular (non-chip) cookie
+ * @module getCookie
+ * @param {String} name - cookie name to get
+ * @returns {String} - returns the value of the cookie
+ */
+nNaf.prototype.getCookie = function(name){
+	try{
+		var i,x,y,cookies=document.cookie.split(";");
+		for (i=0;i<cookies.length;i++){
+			x = cookies[i].substr(0,cookies[i].indexOf("="));
+			y = cookies[i].substr(cookies[i].indexOf("=")+1);
+			x = x.replace(/^\s+|\s+$/g,"");
+			if (x==name){
+				return this.unescape(this.sanitizeUntrusted(y));
+			}
+		}
+		return '';
+	}
+	catch(e){this.debug('getCookie : '+e);}
+};
+
+/**
+ * Sets a regular (non-chip) cookie
+ * @module setCookie
+ * @param {String} name - cookie name to set
+ * @param {String} value - cookie value
+ * @returns nothing
+ */
+nNaf.prototype.setCookie = function(name,value){
+	try {
+		var path = "; path=/";
+		domain = document.location.hostname;
+		dparts = domain.split(".");
+		var len = dparts.length;
+		var rootDomain = [];
+
+		// get the # of pieces we should get from the domain
+		var cookieParts = 2;
+		if(dparts[len-1].length <= 2 && dparts[len-2].length <= 2){
+			cookieParts = 3;
+		}
+
+		// set the final domain to set the cookie under
+		for(var i=0;i<cookieParts;i++){
+			rootDomain.push(dparts[len-(cookieParts+i)+1]);
+		}
+		rootDomain = '.'+rootDomain.reverse().join('.');
+
+		if(!rootDomain){
+			rootDomain = domain;
+		}
+
+		var cookie = name + "=" + this.escape(value) + path + ("; domain=" + rootDomain);
+		document.cookie = cookie;
+	}
+	catch(e){this.debug("setCookie : "+e);}
+};
+
+/**
+ * Reads a chip from a super cookie
+ * @module getChip
+ * @param {String} chipName - The chip name to get from the super cookie
+ * @param {String} superCookie[naf.cfg.cookies.defaultCookie] - The super cookie to read from
+ * @returns {String} - The value of the chip, if set
+ */
+nNaf.prototype.getChip = function(chipName,superCookie){
+	try {
+		superCookie = typeof superCookie == 'undefined' ? this.cfg.cookies.defaultCookie : superCookie;
+		var chips = this.getCookie(superCookie);
+		var chipDelimiter = this.cfg.cookies.chipDelimiter;
+		var nameValueDelimiter = this.cfg.cookies.nameValueDelimiter;
+
+		// put chips in an array
+		var c = chips.split(chipDelimiter);
+		var chip = '';
+
+		// loop through the array and find our chip
+		for(var i=0;i<c.length;i++){
+			var pos = c[i].indexOf(chipName+nameValueDelimiter);
+			var len = (chipName+nameValueDelimiter).length;
+			if(pos===0){
+				chip = c[i].substring(len,c[i].length);
+				i=c.length;
+			}
+		}
+		return this.sanitizeUntrusted(chip);
+	}
+	catch(e){this.debug('getChip: '+e);}
+};
+
+/**
+ * Sets a chip on a super cookie
+ * @module setChip
+ * @param {String} chipName - The chip name to get from the super cookie
+ * @param {String} chipValue - The chip name to get from the super cookie
+ * @param {String} superCookie[naf.cfg.chipCookieName] - The super cookie to write to
+ * @returns {String} - The value of the chip, if set
+ */
+nNaf.prototype.setChip = function(chipName,chipValue,superCookie){
+	try {
+		// require a chip name
+		if(!chipName){
+			return '';
+		}
+		// set the chip value to a blank string if null or undefined
+		if(typeof chipValue === 'undefined' || chipValue === null){
+			chipValue = '';
+		}
+
+		// chip settings
+		superCookie = typeof superCookie == 'undefined' ? this.cfg.cookies.defaultCookie : superCookie;
+		var chips = this.getCookie(superCookie);
+		var chipDelimiter = this.cfg.cookies.chipDelimiter;
+		var nameValueDelimiter = this.cfg.cookies.nameValueDelimiter;
+		var chipExists = false;
+
+		// put chips in an array
+		var c = [];
+		if(chips)
+			c = chips.split(chipDelimiter);
+
+		// loop through the array and find our chip to update it
+		for(var i=0;i<c.length;i++){
+			if(c[i].indexOf(chipName+nameValueDelimiter)===0){
+				// already have the chip, just update it
+				chipExists = true;
+				c[i]=chipName+nameValueDelimiter+chipValue;
+				i=c.length;
+			}
+		}
+
+		// chip doesn't exist, write it
+		if(!chipExists){
+			c.push(chipName+nameValueDelimiter+chipValue);
+		}
+
+		// join the chips and write to the super cookie
+		this.setCookie(superCookie,c.join(chipDelimiter));
+	}
+	catch(e){this.debug('setChip: '+e);}
+};
+
+/**
+ * Deletes a chip from a super cookie
+ * @module deleteChip
+ * @param {String} chipName - The chip name to deletefrom the super cookie
+ * @param {String} superCookie[naf.cfg.cookies.defaultCookie] - The super cookie to deletefrom
+ * @returns nothing
+ */
+nNaf.prototype.deleteChip = function(chipName,superCookie){
+	try {
+		superCookie = typeof superCookie == 'undefined' ? this.cfg.cookies.defaultCookie : superCookie;
+		var chips = this.getCookie(superCookie);
+		var chipDelimiter = this.cfg.cookies.chipDelimiter;
+		var nameValueDelimiter = this.cfg.cookies.nameValueDelimiter;
+		var newChips = "";
+		// put chips in an array
+		var c = chips.split(chipDelimiter);
+		var chip = '';
+		//Find and delete the chip
+		for(var key in c){
+			if(c[key].indexOf(chipName) >= 0){
+				delete c[key];
+				break;
+			}
+		}
+		//rebuild the chips, we don't want any "undefined's" returned
+		var tmpC = [];
+		var tmpCPos = 0;
+
+		for(var i=0;i<c.length;i++){
+			if(typeof c[i] !="undefined"){
+				tmpC[tmpCPos] = c[i];
+				tmpCPos++;
+			}
+		}
+		newChips = tmpC.join(chipDelimiter);
+
+		this.setCookie(superCookie,newChips);
+	}
+	catch(e){this.debug('getChip: '+e);}
+};
+
+/**
+ * Reads all chips from a super cookie
+ * @module getChips
+ * @param {String} superCookie[naf.cfg.chipCookieName] - The super cookie to read from
+ * @returns {Object} - JSON object with all chip names and values
+ */
+nNaf.prototype.loadChips = function(superCookie){
+	try {
+		superCookie = typeof superCookie == 'undefined' ? this.cfg.cookies.defaultCookie : superCookie;
+		var chips = this.getCookie(superCookie);
+		var chipDelimiter = this.cfg.cookies.chipDelimiter;
+		var nameValueDelimiter = this.cfg.cookies.nameValueDelimiter;
+
+		// put chips in an array
+		var chipArray = chips.split(chipDelimiter);
+		var chipObject = {}; // JSON object with all chips
+
+		// loop through the array and find our chip
+		for(var i=0;i<chipArray.length;i++){
+			var cookie = chipArray[i].split(nameValueDelimiter);
+			chipObject[cookie[0]]=this.sanitizeUntrusted(cookie[1]);
+		}
+		return chipObject;
+	}
+	catch(e){this.debug('getChips: '+e);}
+};
+
+/**
+ * Load page level data into the naf.data object - reads from meta tags and other JSON objects (not under naf)
+ * @module loadData
+ * @returns nothing
+ */
+nNaf.prototype.loadData = function(){
+	try {
+		var i=0,j=0;
+
+		// load from cookies first, these can be overwritten
+		if(this.cfg.dataTypes.cookies === true && typeof this.loadChips != 'undefined'){
+			var dataCookie = this.loadChips(this.cfg.cookies.dataCookie);
+			for(var chip in dataCookie){
+				this.set(chip,dataCookie[chip]);
+			}
+		}
+
+		// html5 attributes - requires jQuery
+		/*
+		if(typeof this.cfg.dataTypes.html5 !='undefined' && this.jquery){
+			var tags = this.cfg.dataTypes.html5.tags || '*';
+			var startsWith = this.cfg.dataTypes.html5.startsWith || 'md';
+			var tempNaf = this; // captures the framework so we can use it instead of this
+			for(i=0;i<tags.length;i++){
+				this.$(tags[i]).filter(function(){
+					var data = tempNaf.$(this).data();
+					for(var prop in data){
+						if(prop.indexOf(startsWith)===0){
+							var n = prop.substring(startsWith.length);
+							var v = data[prop];
+							tempNaf.set(n,v);
+						}
+					}
+				});
+			}
+		}
+		*/
+		// JSON object
+		if(typeof this.cfg.dataTypes.json != 'undefined'){
+			// ensure the JSON object is on the page before doing anything
+			var jsons = this.cfg.dataTypes.json;
+			var json = jsons.split(',');
+			for(var k=0;k<json.length;k++){
+				if(typeof window[json[k]]!='undefined'){
+					this.debug('loading data from JSON: '+json[k]);
+					var obj = window[json[k]];
+					for(var prop in obj){
+						this.set(prop,obj[prop]);
+					}
+					this.dataTypes.push('json');
+				}
+			}
+		}
+
+		// meta tags - overwrites any previous data with the same name
+		if(typeof this.cfg.dataTypes.meta != 'undefined'){
+			var meta = document.getElementsByTagName('meta');
+			for(i=0;i<meta.length;i++){
+				var name = meta[i].getAttribute('name');
+				if(name){
+					var metas = this.cfg.dataTypes.meta.split(',');
+					for(var l=0;l<metas.length;l++){
+						j = name.indexOf(metas[l]+'.');
+						if(j === 0){
+							var n = name.substring(metas[l].length+1);
+							var v = meta[i].getAttribute('content');
+							this.set(n,v);
+						}
+					}
+				}
+			}
+			this.debug('loading data from meta: '+this.cfg.dataTypes.meta);
+			this.dataTypes.push('meta');
+		}
+	}
+	catch(e){this.debug('loadData: '+e);}
+};
+
+/**
+ * Gets data from a meta tag
+ * @module getMeta
+ * @param name {String} - name of the meta tag to get
+ * @returns {String} - content of the meta tag
+ */
+nNaf.prototype.getMeta = function(name){
+	try {
+		if(!name){return '';}
+		var meta = document.getElementsByTagName('meta');
+		for(var i=0;i<meta.length;i++){
+			var n = meta[i].getAttribute('name');
+			if(name == n){
+				return meta[i].getAttribute('content');
+			}
+		}
+		return '';
+	}
+	catch(e){this.debug('getMeta: '+e);}
+};
+
+/**
+ * Set a property on the digitalData object
+ * @module set
+ * @param property - The property to set on the naf.data object
+ * @param value - The value to set the property to.  Case sensitive.
+ * @param setCookie - If true, it will also set it in a cookie (defined in config)
+ * @param overwrite - If false, it will not overwrite a value already set.  Defaults to true.
+ * @returns nothing
+ */
+
+
+nNaf.prototype.set = function(property,value,setCookie,overwrite){
+	try {
+		// default values if not set
+		setCookie = typeof setCookie == 'undefined' ? false : setCookie; // default setCookie to false
+		overwrite = typeof overwrite == 'undefined' ? true : overwrite; // default overwrite to true
+
+		// require a property
+		if(typeof property === 'undefined' || property === '' || property === null){
+			return '';
+		}
+		property = property.toLowerCase(); // force all property names to be lower case
+
+		// require a value, but allow it to be a blank string just in case we want to clear it
+		if(typeof value == 'undefined'){
+			return '';
+		}
+
+		if(typeof utag_data == 'undefined'){
+			utag_data = {};
+		}
+
+		// add this data to the digitalData object and any ancestor nodes that don't exist yet.
+		var ary_property = property.split(".");
+		co = utag_data;
+		for(var i = 0; i < ary_property.length - 1; i++)
+		{
+			co = (co[ary_property[i]])? co[ary_property[i]] : co[ary_property[i]] = {};
+		}
+
+		// set the property on the naf.data object
+		if(typeof(overwrite) == "undefined" || overwrite === true){
+			co[ary_property[ary_property.length - 1]] = value;
+		} else if (overwrite === false) { //determine if we have a value and should set the variable
+			if (typeof(co[ary_property[ary_property.length - 1]]) == "undefined") {
+				co[ary_property[ary_property.length - 1]] = value;
+			}
+		}
+
+		// set a cookie if configured
+		if(setCookie === true && typeof this.cfg.cookies.dataCookie != 'undefined' && this.cfg.dataTypes.cookies === true){
+			// this is a cookie that only captures data that is automatically captured and passed on every page
+			var dataCookie = this.cfg.cookies.dataCookie;
+			if(overwrite === true){
+				this.setChip(property,value,dataCookie);
+			}
+			// do not overwrite, only set if it doesn't exist
+			else if(overwrite === false && !this.getChip(property,dataCookie)){
+				this.setChip(property,value,dataCookie);
+			}
+		}
+
+
+		else {
+			// do not overwrite - only set if it not set
+			if(typeof utag_data[property] === 'undefined' || utag_data[property]===''){
+			}
+		}
+	}
+	catch(e){this.debug('set: '+e);}
+};
+/**
+ * Get a property from the naf.data object
+ * @module set
+ * @param property - The property to get from the naf.data object
+ * @returns a string of the property value, and if not set it returns a blank string
+ */
+nNaf.prototype.get = function(property){
+	try {
+		var ret = '';
+		var p = typeof property != 'undefined' ? property.toLowerCase() : '';
+
+		var ary_property = property.split(".");
+		co = utag_data;
+		for(var i = 0; i < ary_property.length; i++)
+		{
+			co = (co[ary_property[i]])? co[ary_property[i]] : exit;
+		}
+
+		if(typeof utag_data != 'undefined' && typeof utag_data[p] != 'undefined'){
+			ret = utag_data[p];
+		}
+
+		return ret;
+	}
+	catch(e){this.debug('get: '+e);}
+};
+
+/**
+ * Get the location to self for additional file inclusions
+ * @module getLocationToSelf
+ * @returns a string of the location of the framework file
+ */
+nNaf.prototype.getLocationToSelf = function(){
+	try {
+		var scripts = document.getElementsByTagName('script');
+		var source = '';
+
+		var self = this.cfg.frameworkFile || 'naf';
+		if(this.cfg.frameworkLocation){
+			source = this.cfg.frameworkLocation;
+		}
+		else {
+			for(var i=0;i<scripts.length;i++){
+				var script = scripts[i].src;
+				var pos = script.lastIndexOf('/');
+				script = script.substring(pos,script.length);
+				if(script.indexOf(self)>-1){
+					source = scripts[i].src.substring(0,pos+1);
+					continue;
+				}
+			}
+		}
+		this.src = source;
+	}
+	catch(e){this.debug('get: '+e);}
+};
+
+/**
+* Loads a script library (.js file) and calls a function when the .js file is finished loading
+* @param src - string source URL of the Javscript file
+* @param olFunction - function, a defined function to call when the .js file in src has finished loading
+*/
+nNaf.prototype.loadScriptLibrary = function(src, olFunction) {
+	try {
+		/* don't load again, if we already loaded */
+		if(typeof(this.fLoad[src]) == 'undefined') {
+			var library = document.createElement('script');
+			library.type = 'text/javascript';
+			library.src = src;
+			if(typeof olFunction == 'function') {
+				if(library.addEventListener) {
+					library.addEventListener("load",olFunction,false);
+				} else {
+					olFunIE = olFunction.toString();
+					var from = olFunIE.indexOf('{') + 1;
+					var length = olFunIE.length - 1 - from;
+					olFunIE = olFunIE.substr(from, length);
+					library.onreadystatechange = function () {
+						if (library.readyState == 'complete' || library.readyState == 'loaded') {
+							eval(olFunIE);
+						}
+					};
+				}
+			}
+			document.getElementsByTagName('head')[0].appendChild(library);
+			this.fLoad[src] = 1; /* set loaded flag */
+		} else {
+			this.debug('loadScriptLibrary : skipping already loaded file : '+src);
+		}
+	} catch (e) {
+		this.debug('loadScriptLibrary : '+e);
+	}
+};
+
+/**
+ * Main _naq flushing function, flushes queue and replaces _naq.push
+ * @member nNaf
+ * @module fq
+ * @param q - array, contains array of arrays in format ["function","arg1","arg2","..."] where the function is on the naf object
+ */
+nNaf.prototype.fq = function (q) {
+	try {
+		var i,len,dot;
+		var newNaq = []; // new _naq array to execute later
+
+		// exit if nothing is defined
+		if (typeof(q) === 'undefined') {
+			q = [];
+			var tempQ = window[this.cfg.nafArray] || [];
+			for(i=0;i<tempQ.length;i++){
+				q.push(tempQ[i]);
+			}
+			if(typeof(q) === 'undefined'){
+				return false;
+			}
+		}
+
+		len = q.length; // number of items in the q array
+
+		// loop through each array and do our thing
+		for (i = 0; i < len; ++i) {
+			// get some defaults from the current function
+			var object = false; // default to no object (app)
+			var functionName = q[i][0]; // default the functionName to what we have passed
+			var fqFunction = false; // placeholder for the actual function we are going to execute
+			var globalFunction = false;
+
+			// we only accept strings
+			if(typeof(functionName) === 'string') {
+				// see if we have a dot (app file function)
+				dot = functionName.indexOf('.');
+				if (dot > -1) {
+					// split it into the naf object and function name
+					object = functionName.substr(0, dot);
+					functionName = functionName.substr(dot + 1, functionName.length);
+
+					// the app file has not yet loaded, so let's load it
+					if (typeof(this[object]) === 'undefined' || typeof(this[object][functionName]) === 'undefined') {
+						// make sure the page view has fired before we include the app
+						if(this.firstPageView === true){
+							// load the app file and push the function to execute after it loads
+							var tempNaf = this;
+							this.loadScriptLibrary(this.src + 'apps/' + object + this.scriptSuffix,function () {
+								// code to execute after
+								if (typeof object !== "undefined") {
+									tempNaf.debug('fq: return from dynamic load of app: ' + object);
+									tempNaf.fq(); // flush the queue
+								}
+							});
+
+							// if we weren't able to load fast, clear our functionName and push to execute once it loads
+							if(typeof(this[object]) === 'undefined' || typeof(this[object][functionName]) === 'undefined'){
+								this.debug('fq : dynamically loaded but function not ready yet: '+object+'.'+functionName);
+								newNaq.push(q[i]);
+								continue;
+							}
+						}
+						// wait for the
+					}
+					// the app has loaded, execute the app function
+					else {
+						fqFunction = functionName;
+						functionName = 'naf.'+object+'.'+functionName;
+					}
+				}
+				// it must be in our naf object, make sure it is
+				else if(typeof(this[functionName]) !== 'undefined') {
+					// make sure the function exists in the naf object
+					fqFunction = functionName;
+					functionName = 'naf.'+functionName;
+				}
+				else if(typeof window[functionName] !== 'undefined'){
+					fqFunction = functionName;
+					globalFunction = true;
+				}
+			}
+			// if it's not a string, set a message
+			else {this.debug('fq: function name expected to be a string');}
+
+			// check to see if it should wait until after the first page load
+			if(this.cfg.afterPageLoad && ! this.firstPageView){
+				var afterPageLoad = ','+this.cfg.afterPageLoad.join(',')+',';
+				if(afterPageLoad.indexOf(','+functionName+',')>-1){
+					fqFunction = false;
+					newNaq.push(q[i]);
+				}
+			}
+
+			// only execute if we have a function
+			if(fqFunction){
+				// get the number of arguments to pass to the function
+				numArgs = q[i].length-1;
+
+				this.debug('fq : executing function: '+functionName);
+
+				// execute the function with its arguments
+				switch (numArgs) {
+				case 0:
+					if(globalFunction)
+						window[fqFunction]();
+					else {
+						if(object)
+							this[object][fqFunction]();
+						else
+							this[fqFunction]();
+					}
+					break;
+				case 1:
+					if(globalFunction)
+						window[fqFunction](q[i][1]);
+					else {
+						if(object)
+							this[object][fqFunction](q[i][1]);
+						else
+							this[fqFunction](q[i][1]);
+					}
+					break;
+				case 2:
+					if(globalFunction)
+						window[fqFunction](q[i][1],q[i][2]);
+					else {
+						if(object)
+							this[object][fqFunction](q[i][1],q[i][2]);
+						else
+							this[fqFunction](q[i][1],q[i][2]);
+					}
+					break;
+				case 3:
+					if(globalFunction)
+						window[fqFunction](q[i][1],q[i][2],q[i][3]);
+					else {
+						if(object)
+							this[object][fqFunction](q[i][1],q[i][2],q[i][3]);
+						else
+							this[fqFunction](q[i][1],q[i][2],q[i][3]);
+					}
+					break;
+				case 4:
+					if(globalFunction)
+						window[fqFunction](q[i][1],q[i][2],q[i][3],q[i][4]);
+					else {
+						if(object)
+							this[object][fqFunction](q[i][1],q[i][2],q[i][3],q[i][4]);
+						else
+							this[fqFunction](q[i][1],q[i][2],q[i][3],q[i][4]);
+					}
+					break;
+				case 5:
+					if(globalFunction)
+						window[fqFunction](q[i][1],q[i][2],q[i][3],q[i][4], q[i][5]);
+					else {
+						if(object)
+							this[object][fqFunction](q[i][1],q[i][2],q[i][3],q[i][4], q[i][5]);
+						else
+							this[fqFunction](q[i][1],q[i][2],q[i][3],q[i][4], q[i][5]);
+					}
+					break;
+				}
+			}
+		}
+		/* end each element in array */
+
+		/* reset our _naq array with only the ones we couldn't fire */
+		if (typeof(window[this.cfg.nafArray]) !== 'undefined') {
+			window[this.cfg.nafArray] = newNaq;
+			window[this.cfg.nafArray].push = this.nPshr;
+		}
+	}
+	catch(e){this.debug('fq: '+e);}
+};
+
+/**
+ * Push replacement function after queue is initialy flushed
+ * @member nNaf
+ * @module nPshr
+ */
+nNaf.prototype.nPshr = function() {
+	Array.prototype.push.apply(this,arguments);
+	naf.fq();
+};
+
+/**
+ * Sets an event
+ * @module setEvent
+ * @param {array} e - the event to set
+
+ * @returns nothing, just updates s.events
+ */
+nNaf.prototype.setEvent = function(event,category) {
+    if (!event.eventName) {
+        return;
+    }
+    if (this.digitalData.event) {
+    	/*
+        index = digitalData.event.push({
+            eventInfo: event,
+            category: category
+            }
+        });
+        digitalData.eventLookup[eventName] = index - 1;
+        */
+    }
+}
+
+nNaf.prototype.getEvent = function(eventName) {
+	//Create a for loop to pull all the properties that are in this event
+	for (eventProp in this.digitalData.events[this.digitalData.eventLookup[eventName]]) {
+
+		eventObj = this.digitalData.events[this.digitalData.eventLookup[eventName]];
+
+	}
+	return eventObj;
+}
+
+
+/**
+ * Adds a unique value to a list
+ * @module apl
+ * @param {String} e - the event to check for
+ * @returns nothing, simply adds the new value to the list
+ */
+nNaf.prototype.apl = function(list,value,separator){
+	try {
+		var l=list;
+		separator = typeof separator == 'undefined' ? '|' : separator;
+
+		// check the list for the value, only append if not in the list
+		if((l+separator).indexOf(value+separator)==-1){
+			if(l.length > 0){
+				l+=separator+value;
+			}
+			else {
+				l = value;
+			}
+		}
+
+		return l;
+	}
+	catch(e){
+		this.debug('apl : '+e);
+	}
+};
+
+/*********************** Framework Plugins and Vendor Code ***********************/
+/****** Framework Plugins ******/
+
+/**
+ * Get campaign id from querystring
+ * @returns {String}
+ */
+nNaf.prototype.getCamp = function() {
+try {
+	var aCamp = false;
+
+	aCamp = (this.getQueryParam("cmpid").length > 0) ? this.getQueryParam("cmpid") : aCamp;
+	aCamp = (this.getQueryParam("cid").length > 0) ? this.getQueryParam("cid") : aCamp;
+	aCamp = (this.getQueryParam("IQ_ID").length > 0) ? this.getQueryParam("IQ_ID") : aCamp;
+
+	//Process
+
+	return aCamp;
+  } catch(e) {
+	//console.log('getCamp error : '+e);
+  }
+};
+
+
+
+
+/**
+* Clean up names from url strings
+*/
+nNaf.prototype.cleanName = function (strName) {
+
+	strName = strName.replace(/_/g," ");
+	strName = strName.replace(/-/g," ");
+	strName = strName.replace(/\.php/g,"");
+	strName = strName.replace(/\.do/g,"");
+	strName = strName.replace(/\.jsp/g,"");
+	strName = strName.replace(/\.aspx/g,"");
+	strName = strName.replace(/\.html/g,"");
+	strName = strName.replace(/\.htm/g,"");
+	strName = strName.replace(/\.cgi/g,"");
+
+	if (strName.indexOf("?") > -1) {
+
+		aryNoParam = strName.split("?");
+		strName = aryNoParam[0];
+
+	}
+	if (strName.indexOf("#") > -1) {
+
+		aryNoHash = strName.split("#");
+		strName = aryNoHash[0];
+
+	}
+
+	return strName;
+};
+
+
+/**
+ * fieldtracker - This will send an Omniture beacon when the user interacts with a tracked field
+ * @module fieldtracker
+ * @author Matthew Coers
+ * @param {String} [formname=name of form to be processed] the name attribute of the form to track
+ * @param {String} [field=name of field to be processed] the name attribute of the field to track
+ * @returns {Boolean} True if successful
+ */
+
+nNaf.prototype.fieldtracker = function (formname, field) {
+	try {
+
+		//Initialize variables
+		var fieldvalue = $(field).val();
+		var fieldname = $(field).attr("name");
+
+		//initialize the field array
+		if (typeof(naf.data.ary_field_clicks) == "undefined") {
+			naf.data.ary_field_clicks = {};
+		}
+
+		if (fieldvalue === "" || typeof(fieldvalue) === 'undefined') {
+			valueTest = "no value";
+		} else {
+			valueTest = "completed";
+		}
+
+		if (typeof(naf.data.ary_field_clicks[fieldname]) == "undefined" || naf.data.ary_field_clicks[fieldname] != valueTest) {
+
+			naf.data.ary_field_clicks[fieldname] = valueTest;
+
+			var formFieldString = formname + ' : ' + fieldname + ' : ' + valueTest;
+			formFieldString = formFieldString.toLowerCase();
+
+			eventInfo = {};
+			eventInfo.ID = "fieldtrack";
+			eventInfo.eventName = "Track Field";
+			eventInfo.eventPoints = 0;
+			eventInfo.type = "userAction";
+			eventInfo.timeStamp = new Date();
+			eventInfo.effect = "field tracking";
+			eventInfo.formname = formname;
+			eventInfo.formfieldstring = formFieldString;
+
+			if (valueTest == "no value") {
+				eventInfo.eventAction = "no data";
+			} else if (valueTest == "completed") {
+				eventInfo.eventAction = "complete";
+			}
+
+			naf.track("formfieldtrack");
+		}
+		return true;
+
+	} catch(e) {
+		console.log('fieldtracker error : '+e);
+	}
+};
+
+nNaf.prototype.formtrackerfire = function (formname) {
+	//Check to see if this form has been started
+	if (typeof(aryFormStarts) == 'undefined') { aryFormStarts = []}
+	if (naf.getChip("formstart") != formname && aryFormStarts.indexOf(formname) == -1) {
+		aryFormStarts.push(formname);
+		eventInfo = {};
+		eventInfo.event_form_start = "true";
+		eventInfo.form_name = formname;
+		eventInfo.link_name = "form start";
+		naf.track(eventInfo);
+	}
+	naf.setChip("formstart",formname);
+}
+
+/**
+ * formtracker - This will bind the fieldtracker method to the fields specified in the
+ * naf.sc.dataMap.nafFormTrackConfig.formtracker.forms array
+ * @module formtracker
+ * @author Matthew Coers
+ * @dependencies fieldtracker
+ * @param {String} [element name=name of form to be processed] the name attribute of the form to track
+ * Must match a form in the naf.sc.dataMap.nafFormTrackConfig.formtracker.forms array
+ * @returns {Boolean} True if successful
+ */
+
+/****** BEGIN Framework Plugin ******/
+
+nNaf.prototype.formtracker = function (formobject) {
+	try {
+
+		var formname = $(formobject).attr('name');
+		var formID = formobject.id;
+		$('#' + formID + ' input').each(function(index) {
+			var field = $(this);
+			$(this).bind("focus",{field:field},function (e) {
+				naf.formtrackerfire(formname);
+			});
+		});
+
+		$('#' + formID + ' select').each(function(index) {
+			var field = $(this);
+			$(this).bind("focus",{field:field},function (e) {
+				naf.formtrackerfire(formname);
+			});
+		});
+
+		$('#' + formID + ' textarea').each(function(index) {
+			var field = $(this);
+			$(this).bind("focus",{field:field},function (e) {
+				naf.formtrackerfire(formname);
+			});
+		});
+
+		if ($(formobject).hasClass('trackFields')) {
+
+			$('#' + formID + ' input:text').each(function(index) {
+				var field = $(this);
+				$(this).bind("blur",{field:field},function (e) {
+					naf.fieldtracker(formname, field)
+				});
+
+			});
+
+			$('#' + formID + ' input[type="email"]').each(function(index) { // input:email unsupported jquery
+			  	var field = $(this);
+			  	$(this).bind("blur",{field:field},function (e) {
+					naf.fieldtracker(formname, field)
+				});
+
+			});
+
+			$('#' + formID + ' input:password').each(function(index) {
+				var field = $(this);
+				$(this).bind("blur",{field:field},function (e) {
+					naf.fieldtracker(formname, field)
+				});
+
+			});
+
+			$('#' + formID + ' input:radio').each(function(index) {
+				var field = $(this);
+				$(this).bind("change",{field:field},function (e) {
+					naf.fieldtracker(formname, field)
+				});
+
+			});
+
+			$('#' + formID + ' input:checkbox').each(function(index) {
+				var field = $(this);
+				$(this).bind("change",{field:field},function (e) {
+					naf.fieldtracker(formname, field)
+				});
+
+			});
+
+			$('#' + formID + ' select').each(function(index) {
+				var field = $(this);
+				$(this).bind("change",{field:field},function (e) {
+					naf.fieldtracker(formname, field)
+				});
+
+			});
+
+			$('#' + formID + ' textarea').each(function(index) {
+				var field = $(this);
+				$(this).bind("blur",{field:field},function (e) {
+					naf.fieldtracker(formname, field)
+				});
+
+			});
+		}
+		return true;
+
+	} catch(e) {
+	  console.log('formtracker error : '+e);
+	}
+};
+
+nNaf.prototype.formTrackerComplete = function (formname) {
+
+  formchip = naf.getChip("formstart");
+  if (typeof(formchip) != 'undefined' && formchip == formname) {
+
+	  eventInfo = {};
+	  eventInfo.ID = "formtrack";
+
+	  if (formname === "demoform") {
+		eventInfo.eventName = "Complete A Demo Form";
+	  	eventInfo.eventAction = "demoformcomplete";
+	  }
+
+	  eventInfo.eventPoints = 0;
+	  eventInfo.type = "userAction";
+	  eventInfo.timeStamp = new Date();
+	  eventInfo.effect = "form tracking";
+	  eventInfo.formname = formname;
+	  eventInfo.companysize = "250";
+
+	  category = {};
+	  if (naf.checkObj("this.digitalData.page.category.primaryCategory") == true) {
+		  category.primaryCategory = this.digitalData.page.category.primaryCategory;
+	  }
+
+	  naf.setEvent(eventInfo,category);
+	  naf.setChip("formstart","");
+	  naf.deleteChip("formstart");
+
+  }
+}
+
+nNaf.prototype.pulsetest = function (param) {
+	console.log(param);
+}
+s={};
+naf = new nNaf();
+naf.pageCode();
+
+//setTimeout(function(){
+console.log("firing tealium");
+
+(function(a,b,c,d){
+    a='//tags.tiqcdn.com/utag/autozone/webdev/prod/utag.js';
+    b=document;c='script';d=b.createElement(c);d.src=a;d.type='text/java'+c;d.async=true;
+    a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
+    })();
+
+//}, 3000);
+
